@@ -1,5 +1,8 @@
 package com.example.rentalhelper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class App {
@@ -27,12 +30,44 @@ public class App {
 		return "索引" + id + "物件 - " + h.getString();
 	}
 
-	public static void main(String[] args) {
+	public static House[] readHouses(String path) throws FileNotFoundException {
+		Scanner fileScanner = new Scanner(new File(path));
 
-		House[] houses = new House[3];
-		houses[0] = new House(10f, "套房", 12000, "王先生", "台北市文山區木柵路一段101號");
-		houses[1] = new House(8f, "套房", 8000, "陳先生", "台北市中山區中山路一段102號");
-		houses[2] = new House(4f, "雅房", 6000, "林先生", "台北市大安區仁愛路一段102號");
+		House[] result = new House[3];
+
+		int lineNo = 0;
+		while (fileScanner.hasNextLine()) {
+			lineNo++;
+			String line = fileScanner.nextLine();
+
+			if (lineNo == 1) {
+				continue;
+			}
+
+			String[] values = line.split(",");
+			float area = Float.parseFloat(values[0]);
+			String type = values[1];
+			int price = Integer.parseInt(values[2]);
+			String owner = values[3];
+			String address = values[4];
+
+			if (lineNo - 2 == result.length) {
+				// extend array
+				result = Arrays.copyOf(result, result.length * 2);
+			}
+			result[lineNo - 2] = new House(area, type, price, owner, address);
+
+		}
+		
+		result = Arrays.copyOf(result, lineNo - 1);
+		fileScanner.close();
+		
+		return result;
+	}
+
+	public static void main(String[] args) throws FileNotFoundException {
+
+		House[] houses = readHouses("/Users/dar1en/Documents/eclipse-workspace/rental-helper/houses.csv");
 
 		Scanner sc = new Scanner(System.in);
 

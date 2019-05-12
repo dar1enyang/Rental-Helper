@@ -12,7 +12,7 @@ public class App {
 	}
 
 	public static void printHouseQuery() {
-		System.out.println("請輸入物件名稱(A, B, C):");
+		System.out.println("請輸入物件索引:");
 	}
 
 	public static void printHouseNotFound() {
@@ -23,17 +23,16 @@ public class App {
 		System.out.println("資料無效!");
 	}
 
-	public static String getHouseInfo(int id, float area, String type, int price, String owner, String address) {
-		return id + "物件 - " + area + "坪 - " + type + " - 每月" + price + "元 - 屋主: " + owner + " - 地址: " + address;
+	public static String getHouseInfo(int id, House h) {
+		return "索引" + id + "物件 - " + h.getString();
 	}
 
 	public static void main(String[] args) {
 
-		float[] areas = new float[] { 10f, 8f, 4f };
-		String[] types = new String[] { "套房", "套房", "雅房" };
-		int[] prices = new int[] { 12000, 8000, 6000 };
-		String[] owners = new String[] { "王先生", "陳先生", "林先生" };
-		String[] addresses = new String[] { "台北市文山區木柵路一段101號", "台北市中山區中山路一段102號", "台北市大安區仁愛路一段102號" };
+		House[] houses = new House[3];
+		houses[0] = new House(10f, "套房", 12000, "王先生", "台北市文山區木柵路一段101號");
+		houses[1] = new House(8f, "套房", 8000, "陳先生", "台北市中山區中山路一段102號");
+		houses[2] = new House(4f, "雅房", 6000, "林先生", "台北市大安區仁愛路一段102號");
 
 		Scanner sc = new Scanner(System.in);
 
@@ -46,8 +45,8 @@ public class App {
 
 				switch (option) {
 				case 1:
-					for (int i = 0; i < areas.length; i++) {
-						System.out.println(getHouseInfo(i, areas[i], types[i], prices[i], owners[i], addresses[i]));
+					for (int i = 0; i < houses.length; i++) {
+						System.out.println(getHouseInfo(i, houses[i]));
 					}
 
 					break;
@@ -56,13 +55,12 @@ public class App {
 					printHouseQuery();
 					int index = sc.nextInt();
 
-					if (!(index >= 0 && index < areas.length)) {
+					if (!(index >= 0 && index < houses.length)) {
 						printHouseNotFound();
 						continue;
 					}
 
-					System.out.println(getHouseInfo(index, areas[index], types[index], prices[index], owners[index],
-							addresses[index]));
+					System.out.println(getHouseInfo(index, houses[index]));
 
 					break;
 				}
@@ -70,11 +68,11 @@ public class App {
 				case 3: {
 					printHouseQuery();
 					int index = sc.nextInt();
-					if (!(index >= 0 && index < areas.length)) {
+					if (!(index >= 0 && index < houses.length)) {
 						printHouseNotFound();
 						continue;
 					}
-					int monthlyPrice = prices[index];
+					int monthlyPrice = houses[index].getPrice();
 
 					// 接收合約租期
 					System.out.println("請輸入合約租期(月):");

@@ -23,6 +23,9 @@ public class DetailPageCrawler {
 		
 		// 抓取頁面編號
 		Element postIdElement = doc.selectFirst("#propNav i");
+		if (postIdElement == null) {
+			return null;
+		}
 		String rawPostId = postIdElement.text();
 		int postId = Integer.parseInt(rawPostId.substring(2, rawPostId.length() - 1));
 		

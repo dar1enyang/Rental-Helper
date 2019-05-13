@@ -18,7 +18,12 @@ public class DetailPageCrawler {
 	}
 
 	public House getHouse() {
-
+		
+		// 抓取頁面編號
+		Element postIdElement = doc.selectFirst("#propNav i");
+		String rawPostId = postIdElement.text();
+		int postId = Integer.parseInt(rawPostId.substring(2, rawPostId.length() - 1));
+		
 		// 抓取房東資訊
 		Element ownerElement = doc.selectFirst("div.avatarRight i");
 		if (ownerElement == null) {
@@ -60,7 +65,16 @@ public class DetailPageCrawler {
 		if (area == 0 || type == null) {
 			return null;
 		}
-
-		return new House(area, type, price, owner, address);
+		
+		// 抓取經緯度
+		MapPageCrawler mpc;
+		try {
+			mpc = new MapPageCrawler(postId);
+		} catch (IOException e) {
+			return null;
+		}
+		double[] coordinate = mpc.getCoordinate();
+		
+		return new House(postId, area, type, price, owner, address, coordinate);
 	}
 }

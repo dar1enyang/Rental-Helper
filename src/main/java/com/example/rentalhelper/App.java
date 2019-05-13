@@ -1,172 +1,84 @@
-//package com.example.rentalhelper;
-//
-//import java.io.File;
-//import java.io.FileNotFoundException;
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.Scanner;
-//
-//public class App {
-//	public static void printGuide() {
-//		System.out.println("Welcome to this rental helper, please select function:");
-//		System.out.println("1. List all rental listings");
-//		System.out.println("2. Rental Inquiry");
-//		System.out.println("3. 租金試算");
-//		System.out.println("4. Exit");
-//	}
-//
-//	public static void printHouseQuery() {
-//		System.out.println("請輸入物件索引:");
-//	}
-//
-//	public static void printHouseNotFound() {
-//		System.out.println("很抱歉, 物件不存在!");
-//	}
-//
-//	public static void printInvalidData() {
-//		System.out.println("資料無效!");
-//	}
-//
-//	public static String getHouseInfo(int id, House h) {
-//		return "索引" + id + "物件 - " + h.toString();
-//	}
-//
-//	public static List<House> readHouses(String path) throws FileNotFoundException {
-//		Scanner fileScanner = new Scanner(new File(path));
-//
-//		List<House> result = new ArrayList<>();
-//
-//		int lineNo = 0;
-//		while (fileScanner.hasNextLine()) {
-//			lineNo++;
-//			String line = fileScanner.nextLine();
-//
-//			if (lineNo == 1) {
-//				continue;
-//			}
-//
-//			String[] values = line.split(",");
-//			float area = Float.parseFloat(values[0]);
-//			String type = values[1];
-//			int price = Integer.parseInt(values[2]);
-//			String owner = values[3];
-//			String address = values[4];
-//
-//			House house = new House(area, type, price, owner, address);
-//			result.add(house);
-//		}
-//
-//		fileScanner.close();
-//
-//		return result;
-//	}
-//
-//	public static void main(String[] args) {
-//
-//		String defaultPath = "/Users/dar1en/Documents/eclipse-workspace/rental-helper/houses.csv";
-//		List<House> houses = null;
-//		Scanner sc = new Scanner(System.in);
-//
-//		// Read data from CSV file
-//		try {
-//			houses = readHouses(defaultPath);
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File not existed in default path: " + defaultPath);
-//			System.out.println("Please input csv file path: ");
-//			String inputPath = sc.nextLine();
-//
-//			try {
-//				houses = readHouses(inputPath);
-//			} catch (FileNotFoundException e2) {
-//				System.out.println("File not existed in path: " + inputPath);
-//				return;
-//			}
-//		}
-//
-//		Collections.sort(houses, new HouseComparator());
-//
-//		mainLoop: while (true) {
-//
-//			printGuide();
-//
-//			if (sc.hasNextInt()) {
-//				int option = sc.nextInt();
-//
-//				switch (option) {
-//				case 1:
-//					for (int i = 0; i < houses.size(); i++) {
-//						System.out.println(getHouseInfo(i, houses.get(i)));
-//					}
-//
-//					break;
-//
-//				case 2: {
-//					printHouseQuery();
-//					int index = sc.nextInt();
-//
-//					if (!(index >= 0 && index < houses.size())) {
-//						printHouseNotFound();
-//						continue;
-//					}
-//
-//					System.out.println(getHouseInfo(index, houses.get(index)));
-//
-//					break;
-//				}
-//
-//				case 3: {
-//					printHouseQuery();
-//					int index = sc.nextInt();
-//					if (!(index >= 0 && index < houses.size())) {
-//						printHouseNotFound();
-//						continue;
-//					}
-//					int monthlyPrice = houses.get(index).getPrice();
-//
-//					// 接收合約租期
-//					System.out.println("請輸入合約租期(月):");
-//					int expectedMonths = sc.nextInt();
-//					if (expectedMonths < 0) {
-//						printInvalidData();
-//						continue;
-//					}
-//					// 接收押金期數
-//					System.out.println("請輸入押金期數(月):");
-//					int depositMonths = sc.nextInt();
-//					if (depositMonths < 0) {
-//						printInvalidData();
-//						continue;
-//					}
-//					// 接收實際租期
-//					System.out.println("請輸入實際租期(月):");
-//					int actualMonths = sc.nextInt();
-//					if (actualMonths > expectedMonths || actualMonths < 0) {
-//						printInvalidData();
-//						continue;
-//					}
-//					// 進行租金試算
-//					int total = monthlyPrice * actualMonths
-//							+ ((actualMonths < expectedMonths) ? (depositMonths * monthlyPrice) : 0);
-//					float average = total / (float) actualMonths;
-//
-//					System.out.println("租金總額: " + total + "元");
-//					System.out.println("月平均租金: " + average + "元");
-//
-//					break;
-//				}
-//				case 4:
-//					break mainLoop;
-//				default:
-//
-//					break;
-//				}
-//			} else {
-//				sc.next();
-//
-//			}
-//
-//		}
-//
-//	}
-//}
+package com.example.rentalhelper;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+
+import org.apache.commons.net.util.TrustManagerUtils;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+
+public class App {
+	public static void main(String[] args) {
+
+		try {
+			// 信任所有SSL憑證發行單位
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, new TrustManager[] { TrustManagerUtils.getAcceptAllTrustManager() }, new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+			// 引導 Morphia 讀取標記
+			Morphia morphia = new Morphia();
+			morphia.mapPackage("com.example.rentalhelper");
+
+			// 建立 MongoDB 網路連線
+			MongoClientURI uri = new MongoClientURI(
+					"mongodb://rental-helper:rental-helper123@cluster0-shard-00-00-d4cqk.mongodb.net:27017,cluster0-shard-00-01-d4cqk.mongodb.net:27017,cluster0-shard-00-02-d4cqk.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true");
+			MongoClient mongoClient = new MongoClient(uri);
+			Datastore datastore = morphia.createDatastore(mongoClient, "rental_helper");
+
+			// 無限迴圈
+			while (true) {
+				// 抓取台北市 1 ~ 12 區
+				for (int sectionId = 1; sectionId <= 12; sectionId++) {
+
+					System.out.println("目前 sectionId: " + sectionId);
+
+					// 透過 ListPageCrawler 實例來抓回列表頁面當中, 通往各屋詳細頁面連結網址
+					ListPageCrawler lpc = new ListPageCrawler(1, sectionId);
+					List<String> detailUrls = lpc.getDetailUrls();
+
+					// 走訪各詳細頁面
+					for (String detailUrl : detailUrls) {
+						System.out.println("詳細頁面網址: " + detailUrl);
+
+						// 透過 DetailPageCrawler 實例來抓取各屋詳細資料
+						DetailPageCrawler dpc = new DetailPageCrawler(detailUrl);
+						House house = dpc.getHouse();
+
+						// 如果成功才會加入資料庫
+						if (house != null) {
+
+							// 查詢資料庫: 是否已經有符合的 postId 的租屋資料
+							List<House> existed = datastore.createQuery(House.class).field("postId")
+									.equal(house.getPostId()).asList();
+							if (existed.size() == 0) {
+								datastore.save(house);
+								System.out.println("資料已寫入");
+							} else {
+								System.out.println("資料已存在");
+							}
+							System.out.println(house.toString());
+						}
+					}
+				}
+				System.out.println("抓取完成");
+				Thread.sleep(300000);
+
+			}
+		} catch (IOException | NoSuchAlgorithmException | KeyManagementException | InterruptedException e) {
+			System.out.println("網頁抓取失敗");
+			e.printStackTrace();
+		}
+
+	}
+}

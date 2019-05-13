@@ -2,7 +2,6 @@ package com.example.rentalhelper;
 
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
-
 import org.mongodb.morphia.geo.Point;
 
 @Entity("houses")

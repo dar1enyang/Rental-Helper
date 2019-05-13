@@ -2,7 +2,9 @@ package com.example.rentalhelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -30,10 +32,10 @@ public class App {
 		return "索引" + id + "物件 - " + h.getString();
 	}
 
-	public static House[] readHouses(String path) throws FileNotFoundException {
+	public static List<House> readHouses(String path) throws FileNotFoundException {
 		Scanner fileScanner = new Scanner(new File(path));
 
-		House[] result = new House[3];
+		List<House> result = new ArrayList<>();
 
 		int lineNo = 0;
 		while (fileScanner.hasNextLine()) {
@@ -51,25 +53,38 @@ public class App {
 			String owner = values[3];
 			String address = values[4];
 
-			if (lineNo - 2 == result.length) {
-				// extend array
-				result = Arrays.copyOf(result, result.length * 2);
-			}
-			result[lineNo - 2] = new House(area, type, price, owner, address);
-
+			House house = new House(area, type, price, owner, address);
+			result.add(house);
 		}
-		
-		result = Arrays.copyOf(result, lineNo - 1);
+
 		fileScanner.close();
-		
+
 		return result;
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) {
 
-		House[] houses = readHouses("/Users/dar1en/Documents/eclipse-workspace/rental-helper/houses.csv");
-
+		String defaultPath = "/Users/dar1en/Documents/eclipse-workspace/rental-helper/houses.csv";
+		List<House> houses = null;
 		Scanner sc = new Scanner(System.in);
+
+		// Read data from CSV file
+		try {
+			houses = readHouses(defaultPath);
+		} catch (FileNotFoundException e) {
+			System.out.println("File not existed in default path: " + defaultPath);
+			System.out.println("Please input csv file path: ");
+			String inputPath = sc.nextLine();
+
+			try {
+				houses = readHouses(inputPath);
+			} catch (FileNotFoundException e2) {
+				System.out.println("File not existed in path: " + inputPath);
+				return;
+			}
+		}
+
+		Collections.sort(houses, new HouseComparator());
 
 		mainLoop: while (true) {
 
@@ -80,8 +95,8 @@ public class App {
 
 				switch (option) {
 				case 1:
-					for (int i = 0; i < houses.length; i++) {
-						System.out.println(getHouseInfo(i, houses[i]));
+					for (int i = 0; i < houses.size(); i++) {
+						System.out.println(getHouseInfo(i, houses.get(i)));
 					}
 
 					break;
@@ -90,12 +105,12 @@ public class App {
 					printHouseQuery();
 					int index = sc.nextInt();
 
-					if (!(index >= 0 && index < houses.length)) {
+					if (!(index >= 0 && index < houses.size())) {
 						printHouseNotFound();
 						continue;
 					}
 
-					System.out.println(getHouseInfo(index, houses[index]));
+					System.out.println(getHouseInfo(index, houses.get(index)));
 
 					break;
 				}
@@ -103,11 +118,11 @@ public class App {
 				case 3: {
 					printHouseQuery();
 					int index = sc.nextInt();
-					if (!(index >= 0 && index < houses.length)) {
+					if (!(index >= 0 && index < houses.size())) {
 						printHouseNotFound();
 						continue;
 					}
-					int monthlyPrice = houses[index].getPrice();
+					int monthlyPrice = houses.get(index).getPrice();
 
 					// 接收合約租期
 					System.out.println("請輸入合約租期(月):");
@@ -142,7 +157,6 @@ public class App {
 				}
 				case 4:
 					break mainLoop;
-
 				default:
 
 					break;
@@ -153,5 +167,6 @@ public class App {
 			}
 
 		}
+
 	}
 }

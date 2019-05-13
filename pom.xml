@@ -5,6 +5,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>rental-helper</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<build>
 
 		<plugins>
@@ -46,4 +47,19 @@
 
 	</build>
 
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.11.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.6</version>
+		</dependency>
+	</dependencies>
 </project>

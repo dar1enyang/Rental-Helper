@@ -13,8 +13,9 @@ public class House {
 		this.owner = owner;
 		this.address = address;
 	}
-
-	public String getString() {
+	
+	@Override
+	public String toString() {
 		return area + "坪 - " + type + " - 每月" + price + "元 - 屋主: " + owner + " - 地址: " + address;
 	}
 	public float getArea() {

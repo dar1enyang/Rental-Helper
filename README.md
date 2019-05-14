@@ -1,5 +1,4 @@
 # Rental-Helper
-> A go-to tool for realtors to collect organized property listings.
 
 Designed a web scraper for realtors with organized property listings and parameters which can be analyzed to determine sales and prospective buyers using Java and Jsoup package. 
 

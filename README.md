@@ -1,81 +1,58 @@
 # Rental-Helper
+> A go-to tool for realtors to collect organized property listings.
 
-# Product Name
-> Short blurb about what your product does.
+Designed a web scraper for realtors with organized property listings and parameters which can be analyzed to determine sales and prospective buyers using Java and Jsoup package. 
 
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
+Stored the housing data with MongoDB database deployed on AWS and made it easily accessible to the analytics team using MongoDB Compass. 
 
-One to two paragraph statement about your product and what it does.
-
-![](header.png)
+Automated the application to scrape new listings based on desired update frequency and location code
 
 ## Installation
 
-OS X & Linux:
-
-```sh
-npm install my-crazy-module --save
-```
-
-Windows:
-
-```sh
-edit autoexec.bat
-```
++ Prerequisites:
+  + Install the Java 8 or later version of [Java](https://java.com/) and [Maven](https://maven.apache.org/download.html)
 
 ## Usage example
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
+To build this project locally:
 
-_For more examples and usage, please refer to the [Wiki][wiki]._
-
-## Development setup
-
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
-
-```sh
-make install
-npm test
+```
+git clone git@github.com:dar1enyang/Rental-Helper.git
 ```
 
-## Release History
+Run maven to build package:
 
-* 0.2.1
-    * CHANGE: Update docs (module code remains unchanged)
-* 0.2.0
-    * CHANGE: Remove `setDefaultXYZ()`
-    * ADD: Add `init()`
-* 0.1.1
-    * FIX: Crash when calling `baz()` (Thanks @GenerousContributorName!)
-* 0.1.0
-    * The first proper release
-    * CHANGE: Rename `foo()` to `bar()`
-* 0.0.1
-    * Work in progress
+```maven
+mvn package
+```
 
-## Meta
+Run this project:
 
-Your Name – [@YourTwitter](https://twitter.com/dbader_org) – YourEmail@example.com
+```
+java -jar /your-path/rental-helper/target/rental-helper-0.0.1-SNAPSHOT.jar
+```
 
-Distributed under the XYZ license. See ``LICENSE`` for more information.
 
-[https://github.com/yourname/github-link](https://github.com/dbader/)
 
-## Contributing
+## Dependencies
 
-1. Fork it (<https://github.com/yourname/yourproject/fork>)
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+####JSoup ![][jsoup-image]
+
+jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do.
+
+#### Apache Commons Net ![][Common-net-image]
+
+Apache Commons Net library contains a collection of network utilities and protocol implementations, used trustmanger to set default SSL socket factory
+
+#### Morphia  ![][morphia-image]
+
+Java Object Document Mapper for MongoDB
+
+
+
+
 
 <!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki
-
+[jsoup-image]: https://d2j3q9yua85jt3.cloudfront.net/img/7be73b50a49c0f9429757ad3d670c58a
+[morphia-image]: https://d2j3q9yua85jt3.cloudfront.net/img/1c7b89fc3793aa68d9ccd47edb1558d2
+[Common-net-image]: https://d2j3q9yua85jt3.cloudfront.net/img/afbc279e1391b649c23fc052822c0447
